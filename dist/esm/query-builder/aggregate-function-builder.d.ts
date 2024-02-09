@@ -10,22 +10,6 @@ export declare class AggregateFunctionBuilder<DB, TB extends keyof DB, O = unkno
     #private;
     constructor(props: AggregateFunctionBuilderProps);
     /** @private */
-    /**
-     * All expressions need to have this getter for complicated type-related reasons.
-     * Simply add this getter for your expression and always return `undefined` from it:
-     *
-     * ```ts
-     * class SomeExpression<T> implements Expression<T> {
-     *   get expressionType(): T | undefined {
-     *     return undefined
-     *   }
-     * }
-     * ```
-     *
-     * The getter is needed to make the expression assignable to another expression only
-     * if the types `T` are assignable. Without this property (or some other property
-     * that references `T`), you could assing `Expression<string>` to `Expression<number>`.
-     */
     get expressionType(): O | undefined;
     /**
      * Returns an aliased version of the function.
@@ -216,20 +200,6 @@ export declare class AggregateFunctionBuilder<DB, TB extends keyof DB, O = unkno
      * returns a copy of `this` with a new output type.
      */
     $notNull(): AggregateFunctionBuilder<DB, TB, Exclude<O, null>>;
-    /**
-     * Creates the OperationNode that describes how to compile this expression into SQL.
-     *
-     * If you are creating a custom expression, it's often easiest to use the {@link sql}
-     * template tag to build the node:
-     *
-     * ```ts
-     * class SomeExpression<T> implements Expression<T> {
-     *   toOperationNode(): OperationNode {
-     *     return sql`some sql here`.toOperationNode()
-     *   }
-     * }
-     * ```
-     */
     toOperationNode(): AggregateFunctionNode;
 }
 /**
@@ -239,18 +209,9 @@ export declare class AliasedAggregateFunctionBuilder<DB, TB extends keyof DB, O 
     #private;
     constructor(aggregateFunctionBuilder: AggregateFunctionBuilder<DB, TB, O>, alias: A);
     /** @private */
-    /**
-     * Returns the aliased expression.
-     */
     get expression(): Expression<O>;
     /** @private */
-    /**
-     * Returns the alias.
-     */
     get alias(): A;
-    /**
-     * Creates the OperationNode that describes how to compile this expression into SQL.
-     */
     toOperationNode(): AliasNode;
 }
 export interface AggregateFunctionBuilderProps {

@@ -24,15 +24,7 @@ export declare class AlterTableBuilder implements ColumnAlteringInterface {
     alterColumn(column: string, alteration: AlterColumnBuilderCallback): AlterTableColumnAlteringBuilder;
     dropColumn(column: string): AlterTableColumnAlteringBuilder;
     renameColumn(column: string, newColumn: string): AlterTableColumnAlteringBuilder;
-    /**
-     * See {@link CreateTableBuilder.addColumn}
-     */
     addColumn(columnName: string, dataType: DataTypeExpression, build?: ColumnDefinitionBuilderCallback): AlterTableColumnAlteringBuilder;
-    /**
-     * Creates an `alter table modify column` query. The `modify column` statement
-     * is only implemeted by MySQL and oracle AFAIK. On other databases you
-     * should use the `alterColumn` method.
-     */
     modifyColumn(columnName: string, dataType: DataTypeExpression, build?: ColumnDefinitionBuilderCallback): AlterTableColumnAlteringBuilder;
     /**
      * See {@link CreateTableBuilder.addUniqueConstraint}
@@ -126,15 +118,7 @@ export declare class AlterTableColumnAlteringBuilder implements ColumnAlteringIn
     alterColumn(column: string, alteration: AlterColumnBuilderCallback): AlterTableColumnAlteringBuilder;
     dropColumn(column: string): AlterTableColumnAlteringBuilder;
     renameColumn(column: string, newColumn: string): AlterTableColumnAlteringBuilder;
-    /**
-     * See {@link CreateTableBuilder.addColumn}
-     */
     addColumn(columnName: string, dataType: DataTypeExpression, build?: ColumnDefinitionBuilderCallback): AlterTableColumnAlteringBuilder;
-    /**
-     * Creates an `alter table modify column` query. The `modify column` statement
-     * is only implemeted by MySQL and oracle AFAIK. On other databases you
-     * should use the `alterColumn` method.
-     */
     modifyColumn(columnName: string, dataType: DataTypeExpression, build?: ColumnDefinitionBuilderCallback): AlterTableColumnAlteringBuilder;
     toOperationNode(): AlterTableNode;
     compile(): CompiledQuery;

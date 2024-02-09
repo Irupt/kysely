@@ -257,135 +257,16 @@ export declare class Kysely<DB> extends QueryCreator<DB> implements QueryExecuto
 export declare class Transaction<DB> extends Kysely<DB> {
     #private;
     constructor(props: KyselyProps);
-    /**
-     * Returns true if this `Kysely` instance is a transaction.
-     *
-     * You can also use `db instanceof Transaction`.
-     */
     get isTransaction(): true;
-    /**
-     * Creates a {@link TransactionBuilder} that can be used to run queries inside a transaction.
-     *
-     * The returned {@link TransactionBuilder} can be used to configure the transaction. The
-     * {@link TransactionBuilder.execute} method can then be called to run the transaction.
-     * {@link TransactionBuilder.execute} takes a function that is run inside the
-     * transaction. If the function throws, the transaction is rolled back. Otherwise
-     * the transaction is committed.
-     *
-     * The callback function passed to the {@link TransactionBuilder.execute | execute}
-     * method gets the transaction object as its only argument. The transaction is
-     * of type {@link Transaction} which inherits {@link Kysely}. Any query
-     * started through the transaction object is executed inside the transaction.
-     *
-     * ### Examples
-     *
-     * <!-- siteExample("transactions", "Simple transaction", 10) -->
-     *
-     * This example inserts two rows in a transaction. If an error is thrown inside
-     * the callback passed to the `execute` method, the transaction is rolled back.
-     * Otherwise it's committed.
-     *
-     * ```ts
-     * const catto = await db.transaction().execute(async (trx) => {
-     *   const jennifer = await trx.insertInto('person')
-     *     .values({
-     *       first_name: 'Jennifer',
-     *       last_name: 'Aniston',
-     *       age: 40,
-     *     })
-     *     .returning('id')
-     *     .executeTakeFirstOrThrow()
-     *
-     *   return await trx.insertInto('pet')
-     *     .values({
-     *       owner_id: jennifer.id,
-     *       name: 'Catto',
-     *       species: 'cat',
-     *       is_favorite: false,
-     *     })
-     *     .returningAll()
-     *     .executeTakeFirst()
-     * })
-     * ```
-     *
-     * Setting the isolation level:
-     *
-     * ```ts
-     * await db
-     *   .transaction()
-     *   .setIsolationLevel('serializable')
-     *   .execute(async (trx) => {
-     *     await doStuff(trx)
-     *   })
-     * ```
-     */
     transaction(): TransactionBuilder<DB>;
-    /**
-     * Provides a kysely instance bound to a single database connection.
-     *
-     * ### Examples
-     *
-     * ```ts
-     * await db
-     *   .connection()
-     *   .execute(async (db) => {
-     *     // `db` is an instance of `Kysely` that's bound to a single
-     *     // database connection. All queries executed through `db` use
-     *     // the same connection.
-     *     await doStuff(db)
-     *   })
-     * ```
-     */
     connection(): ConnectionBuilder<DB>;
-    /**
-     * Releases all resources and disconnects from the database.
-     *
-     * You need to call this when you are done using the `Kysely` instance.
-     */
     destroy(): Promise<void>;
-    /**
-     * Returns a copy of this Kysely instance with the given plugin installed.
-     */
     withPlugin(plugin: KyselyPlugin): Transaction<DB>;
-    /**
-     * Returns a copy of this Kysely instance without any plugins.
-     */
     withoutPlugins(): Transaction<DB>;
     /**
      * @override
      */
     withSchema(schema: string): Transaction<DB>;
-    /**
-     * Returns a copy of this Kysely instance with tables added to its
-     * database type.
-     *
-     * This method only modifies the types and doesn't affect any of the
-     * executed queries in any way.
-     *
-     * ### Examples
-     *
-     * The following example adds and uses a temporary table:
-     *
-     * @example
-     * ```ts
-     * await db.schema
-     *   .createTable('temp_table')
-     *   .temporary()
-     *   .addColumn('some_column', 'integer')
-     *   .execute()
-     *
-     * const tempDb = db.withTables<{
-     *   temp_table: {
-     *     some_column: number
-     *   }
-     * }>()
-     *
-     * await tempDb
-     *   .insertInto('temp_table')
-     *   .values({ some_column: 100 })
-     *   .execute()
-     * ```
-     */
     withTables<T extends Record<string, Record<string, any>>>(): Transaction<DrainOuterGeneric<DB & T>>;
 }
 export interface KyselyProps {

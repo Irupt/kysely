@@ -37,35 +37,11 @@ import { Driver } from './driver.js';
  * ```
  */
 export declare class DummyDriver implements Driver {
-    /**
-     * Initializes the driver.
-     *
-     * After calling this method the driver should be usable and `acquireConnection` etc.
-     * methods should be callable.
-     */
     init(): Promise<void>;
-    /**
-     * Acquires a new connection from the pool.
-     */
     acquireConnection(): Promise<DatabaseConnection>;
-    /**
-     * Begins a transaction.
-     */
     beginTransaction(): Promise<void>;
-    /**
-     * Commits a transaction.
-     */
     commitTransaction(): Promise<void>;
-    /**
-     * Rolls back a transaction.
-     */
     rollbackTransaction(): Promise<void>;
-    /**
-     * Releases a connection back to the pool.
-     */
     releaseConnection(): Promise<void>;
-    /**
-     * Destroys the driver and releases all resources.
-     */
     destroy(): Promise<void>;
 }

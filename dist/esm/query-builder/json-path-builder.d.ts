@@ -126,22 +126,6 @@ export declare class TraversedJSONPathBuilder<S, O> extends JSONPathBuilder<S, O
     #private;
     constructor(node: JSONReferenceNode | JSONPathNode);
     /** @private */
-    /**
-     * All expressions need to have this getter for complicated type-related reasons.
-     * Simply add this getter for your expression and always return `undefined` from it:
-     *
-     * ```ts
-     * class SomeExpression<T> implements Expression<T> {
-     *   get expressionType(): T | undefined {
-     *     return undefined
-     *   }
-     * }
-     * ```
-     *
-     * The getter is needed to make the expression assignable to another expression only
-     * if the types `T` are assignable. Without this property (or some other property
-     * that references `T`), you could assing `Expression<string>` to `Expression<number>`.
-     */
     get expressionType(): O | undefined;
     /**
      * Returns an aliased version of the expression.
@@ -169,62 +153,6 @@ export declare class TraversedJSONPathBuilder<S, O> extends JSONPathBuilder<S, O
      * ```
      */
     as<A extends string>(alias: A): AliasedExpression<O, A>;
-    /**
-     * Returns an aliased version of the expression.
-     *
-     * In addition to slapping `as "the_alias"` at the end of the expression,
-     * this method also provides strict typing:
-     *
-     * ```ts
-     * const result = await db
-     *   .selectFrom('person')
-     *   .select((eb) =>
-     *     // `eb.fn<string>` returns an AliasableExpression<string>
-     *     eb.fn<string>('concat', ['first_name' eb.val(' '), 'last_name']).as('full_name')
-     *   )
-     *   .executeTakeFirstOrThrow()
-     *
-     * // `full_name: string` field exists in the result type.
-     * console.log(result.full_name)
-     * ```
-     *
-     * The generated SQL (PostgreSQL):
-     *
-     * ```ts
-     * select
-     *   concat("first_name", $1, "last_name") as "full_name"
-     * from
-     *   "person"
-     * ```
-     *
-     * You can also pass in a raw SQL snippet (or any expression) but in that case you must
-     * provide the alias as the only type argument:
-     *
-     * ```ts
-     * const values = sql<{ a: number, b: string }>`(values (1, 'foo'))`
-     *
-     * // The alias is `t(a, b)` which specifies the column names
-     * // in addition to the table name. We must tell kysely that
-     * // columns of the table can be referenced through `t`
-     * // by providing an explicit type argument.
-     * const aliasedValues = values.as<'t'>(sql`t(a, b)`)
-     *
-     * await db
-     *   .insertInto('person')
-     *   .columns(['first_name', 'last_name'])
-     *   .expression(
-     *     db.selectFrom(aliasedValues).select(['t.a', 't.b'])
-     *   )
-     * ```
-     *
-     * The generated SQL (PostgreSQL):
-     *
-     * ```ts
-     * insert into "person" ("first_name", "last_name")
-     * from (values (1, 'foo')) as t(a, b)
-     * select "t"."a", "t"."b"
-     * ```
-     */
     as<A extends string>(alias: Expression<unknown>): AliasedExpression<O, A>;
     /**
      * Change the output type of the json path.
@@ -234,37 +162,14 @@ export declare class TraversedJSONPathBuilder<S, O> extends JSONPathBuilder<S, O
      */
     $castTo<C>(): JSONPathBuilder<C>;
     $notNull(): JSONPathBuilder<Exclude<O, null>>;
-    /**
-     * Creates the OperationNode that describes how to compile this expression into SQL.
-     *
-     * If you are creating a custom expression, it's often easiest to use the {@link sql}
-     * template tag to build the node:
-     *
-     * ```ts
-     * class SomeExpression<T> implements Expression<T> {
-     *   toOperationNode(): OperationNode {
-     *     return sql`some sql here`.toOperationNode()
-     *   }
-     * }
-     * ```
-     */
     toOperationNode(): OperationNode;
 }
 export declare class AliasedJSONPathBuilder<O, A extends string> implements AliasedExpression<O, A> {
     #private;
     constructor(jsonPath: TraversedJSONPathBuilder<any, O>, alias: A | Expression<unknown>);
     /** @private */
-    /**
-     * Returns the aliased expression.
-     */
     get expression(): Expression<O>;
     /** @private */
-    /**
-     * Returns the alias.
-     */
     get alias(): A | Expression<unknown>;
-    /**
-     * Creates the OperationNode that describes how to compile this expression into SQL.
-     */
     toOperationNode(): AliasNode;
 }

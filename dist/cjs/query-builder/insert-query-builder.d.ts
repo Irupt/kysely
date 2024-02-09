@@ -444,72 +444,9 @@ export declare class InsertQueryBuilder<DB, TB extends keyof DB, O> implements R
      * ```
      */
     onDuplicateKeyUpdate(update: UpdateObjectExpression<DB, TB, TB>): InsertQueryBuilder<DB, TB, O>;
-    /**
-     * Allows you to return data from modified rows.
-     *
-     * On supported databases like PostgreSQL, this method can be chained to
-     * `insert`, `update` and `delete` queries to return data.
-     *
-     * Note that on SQLite you need to give aliases for the expressions to avoid
-     * [this bug](https://sqlite.org/forum/forumpost/033daf0b32) in SQLite.
-     * For example `.returning('id as id')`.
-     *
-     * Also see the {@link returningAll} method.
-     *
-     * ### Examples
-     *
-     * Return one column:
-     *
-     * ```ts
-     * const { id } = await db
-     *   .insertInto('person')
-     *   .values({
-     *     first_name: 'Jennifer',
-     *     last_name: 'Aniston'
-     *   })
-     *   .returning('id')
-     *   .executeTakeFirst()
-     * ```
-     *
-     * Return multiple columns:
-     *
-     * ```ts
-     * const { id, first_name } = await db
-     *   .insertInto('person')
-     *   .values({
-     *     first_name: 'Jennifer',
-     *     last_name: 'Aniston'
-     *   })
-     *   .returning(['id', 'last_name'])
-     *   .executeTakeFirst()
-     * ```
-     *
-     * Return arbitrary expressions:
-     *
-     * ```ts
-     * import { sql } from 'kysely'
-     *
-     * const { id, full_name, first_pet_id } = await db
-     *   .insertInto('person')
-     *   .values({
-     *     first_name: 'Jennifer',
-     *     last_name: 'Aniston'
-     *   })
-     *   .returning((eb) => [
-     *     'id as id',
-     *     sql<string>`concat(first_name, ' ', last_name)`.as('full_name'),
-     *     eb.selectFrom('pets').select('pet.id').limit(1).as('first_pet_id')
-     *   ])
-     *   .executeTakeFirst()
-     * ```
-     */
     returning<SE extends SelectExpression<DB, TB>>(selections: ReadonlyArray<SE>): InsertQueryBuilder<DB, TB, ReturningRow<DB, TB, O, SE>>;
     returning<CB extends SelectCallback<DB, TB>>(callback: CB): InsertQueryBuilder<DB, TB, ReturningCallbackRow<DB, TB, O, CB>>;
     returning<SE extends SelectExpression<DB, TB>>(selection: SE): InsertQueryBuilder<DB, TB, ReturningRow<DB, TB, O, SE>>;
-    /**
-     * Adds a `returning *` to an insert/update/delete query on databases
-     * that support `returning` such as PostgreSQL.
-     */
     returningAll(): InsertQueryBuilder<DB, TB, Selectable<DB[TB]>>;
     /**
      * Clears all `returning` clauses from the query.
@@ -706,68 +643,7 @@ export declare class InsertQueryBuilder<DB, TB extends keyof DB, O> implements R
      * error.
      */
     executeTakeFirstOrThrow(errorConstructor?: NoResultErrorConstructor | ((node: QueryNode) => Error)): Promise<SimplifyResult<O>>;
-    /**
-     * Executes the query and streams the rows.
-     *
-     * The optional argument `chunkSize` defines how many rows to fetch from the database
-     * at a time. It only affects some dialects like PostgreSQL that support it.
-     *
-     * ### Examples
-     *
-     * ```ts
-     * const stream = db.
-     *   .selectFrom('person')
-     *   .select(['first_name', 'last_name'])
-     *   .where('gender', '=', 'other')
-     *   .stream()
-     *
-     * for await (const person of stream) {
-     *   console.log(person.first_name)
-     *
-     *   if (person.last_name === 'Something') {
-     *     // Breaking or returning before the stream has ended will release
-     *     // the database connection and invalidate the stream.
-     *     break
-     *   }
-     * }
-     * ```
-     */
     stream(chunkSize?: number): AsyncIterableIterator<O>;
-    /**
-     * Executes query with `explain` statement before the main query.
-     *
-     * ```ts
-     * const explained = await db
-     *  .selectFrom('person')
-     *  .where('gender', '=', 'female')
-     *  .selectAll()
-     *  .explain('json')
-     * ```
-     *
-     * The generated SQL (MySQL):
-     *
-     * ```sql
-     * explain format=json select * from `person` where `gender` = ?
-     * ```
-     *
-     * You can also execute `explain analyze` statements.
-     *
-     * ```ts
-     * import { sql } from 'kysely'
-     *
-     * const explained = await db
-     *  .selectFrom('person')
-     *  .where('gender', '=', 'female')
-     *  .selectAll()
-     *  .explain('json', sql`analyze`)
-     * ```
-     *
-     * The generated SQL (PostgreSQL):
-     *
-     * ```sql
-     * explain (analyze, format json) select * from "person" where "gender" = $1
-     * ```
-     */
     explain<ER extends Record<string, any> = Record<string, any>>(format?: ExplainFormat, options?: Expression<any>): Promise<ER[]>;
 }
 export interface InsertQueryBuilderProps {

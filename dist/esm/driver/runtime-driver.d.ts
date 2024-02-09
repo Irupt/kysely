@@ -9,35 +9,11 @@ import { Driver, TransactionSettings } from './driver.js';
 export declare class RuntimeDriver implements Driver {
     #private;
     constructor(driver: Driver, log: Log);
-    /**
-     * Initializes the driver.
-     *
-     * After calling this method the driver should be usable and `acquireConnection` etc.
-     * methods should be callable.
-     */
     init(): Promise<void>;
-    /**
-     * Acquires a new connection from the pool.
-     */
     acquireConnection(): Promise<DatabaseConnection>;
-    /**
-     * Releases a connection back to the pool.
-     */
     releaseConnection(connection: DatabaseConnection): Promise<void>;
-    /**
-     * Begins a transaction.
-     */
     beginTransaction(connection: DatabaseConnection, settings: TransactionSettings): Promise<void>;
-    /**
-     * Commits a transaction.
-     */
     commitTransaction(connection: DatabaseConnection): Promise<void>;
-    /**
-     * Rolls back a transaction.
-     */
     rollbackTransaction(connection: DatabaseConnection): Promise<void>;
-    /**
-     * Destroys the driver and releases all resources.
-     */
     destroy(): Promise<void>;
 }

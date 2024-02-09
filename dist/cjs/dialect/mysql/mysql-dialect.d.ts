@@ -38,24 +38,8 @@ import { MysqlDialectConfig } from './mysql-dialect-config.js';
 export declare class MysqlDialect implements Dialect {
     #private;
     constructor(config: MysqlDialectConfig);
-    /**
-     * Creates a driver for the dialect.
-     */
     createDriver(): Driver;
-    /**
-     * Creates a query compiler for the dialect.
-     */
     createQueryCompiler(): QueryCompiler;
-    /**
-     * Creates an adapter for the dialect.
-     */
     createAdapter(): DialectAdapter;
-    /**
-     * Creates a database introspector that can be used to get database metadata
-     * such as the table names and column names of those tables.
-     *
-     * `db` never has any plugins installed. It's created using
-     * {@link Kysely.withoutPlugins}.
-     */
     createIntrospector(db: Kysely<any>): DatabaseIntrospector;
 }

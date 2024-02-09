@@ -107,6 +107,7 @@ __exportStar(require("./plugin/camel-case/camel-case-plugin.js"), exports);
 __exportStar(require("./plugin/deduplicate-joins/deduplicate-joins-plugin.js"), exports);
 __exportStar(require("./plugin/with-schema/with-schema-plugin.js"), exports);
 __exportStar(require("./plugin/parse-json-results/parse-json-results-plugin.js"), exports);
+__exportStar(require("./plugin/sqlsrv-multi-database/index.js"), exports);
 __exportStar(require("./operation-node/add-column-node.js"), exports);
 __exportStar(require("./operation-node/add-constraint-node.js"), exports);
 __exportStar(require("./operation-node/alias-node.js"), exports);
