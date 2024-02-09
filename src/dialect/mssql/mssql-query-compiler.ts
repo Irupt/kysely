@@ -8,7 +8,12 @@ export class MssqlQueryCompiler extends DefaultQueryCompiler {
   protected override getCurrentParameterPlaceholder(): string {
     return `@${this.numParameters}`
   }
-
+    getLeftIdentifierWrapper() {
+        return '';
+    }
+    getRightIdentifierWrapper() {
+        return '';
+    }
   // mssql allows multi-column alterations in a single statement,
   // but you can only use the command keyword/s once.
   // it also doesn't support multiple kinds of commands in the same
